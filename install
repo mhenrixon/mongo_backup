@@ -1,13 +1,13 @@
 #!/bin/bash
-
-cd /tmp 
+set -e
 
 echo 'Installing mongo_backup'
 
 echo 'Downloading mongo_backup.conf to /etc/mongo_backup.conf'
-
-if [[ -f /etc/mongo_backup.conf ]]; then
-	echo 'ERROR: Donut overwrite /etc/mongo_backup.conf'; exit
+if [[ -f /etc/mongo_backup.conf ]]; then 
+	echo 'ERROR: Donut overwrite /etc/mongo_backup.conf'
+	exit 1
+fi
 
 curl -fsSL https://raw.githubusercontent.com/mhenrixon/mongo_backup/master/mongo_backup.conf | sudo tee /etc/mongo_backup.conf
 echo 'Downloading mongo_backup.sh to /usr/bin/mongo_backup'
