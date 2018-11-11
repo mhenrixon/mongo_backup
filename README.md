@@ -1,2 +1,77 @@
 # mongo_backup
-Handles backups of mongodb
+
+**mongo_backup** is a mongodb backup script created to be easy to use yet flexible, used in production at
+
+## Installation
+
+Using the repository installer
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mhenrixon/mongo_backup/master/install | bash -e
+```
+
+Clone or download as zip from github, extract to directory.  Set the main script as executable (`chmod u+x mongo_backup.sh`).  Edit `mongo_backup.conf` with desired settings and execute from cron.
+
+Upon running, you may provide the path to `mongo_backup.conf` by executing with "-f".  Example:
+
+`./mongo_backup.sh -f /etc/mongo_backup.conf`
+
+## Amazon S3
+
+To use S3 backup, you'll need to install and configure the `s3cmd` tool:
+
+- `sudo apt-get install s3cmd`
+- `s3cmd --configure`
+
+Then add your bucket name and path to the `.conf` file.
+
+Troubles? Detailed steps can be found here: [link](http://lawsonry.com/2014/03/install-s3cmd-ubuntu/)
+
+
+## Compatibility
+
+Tested:  Debian, Ubuntu
+
+### Functionality
+
+* Archiving
+  *	keep several backups on-hand, delete after X days.  
+* Performance throttling  
+  *	mongodb can be quite resource intensive (IO in particular).  
+  * three performance throttles (low, normal, high).  
+  * reduces IO and CPU utilization, useful for backups on master mongo server. 
+* Compression  
+  *	perform gzip compression on backups, reducing space utilization.
+  * tunable compression levels (fast, normal, best).
+* Simple backup
+  * optional simple backup method to bypass compression, archiving and exporting.
+  * useful if simple dumps are needed with performance throttling and error handling.
+* Exporting
+  * automatically transfer latest backup to remote FTP or using SCP.
+* Logging
+  * logging of all events to log file and optionally syslog.
+  * debug mode, copies all mongodump output to debug file to determine failures.
+  * calculates total run time and dump size to understand data growth impact.
+* E-mail notifications
+  *	get updated on successful or failed backup attempts.
+  * includes run time and dump size, on-hand archives and target disk utilization.
+* Write locking
+  * option to enable write locking on replicaSet slaves.
+  * locks writes, performs backup, unlock writes (slave nodes only).
+  * helps ensure a consistent state (also consider: --oplog option)
+* Configurable
+    * Changeable backup path
+    * Ability to set mongodump runtime options.
+    * See example configuration file
+* General
+    * Creates pid file to prevent multiple startups.
+    * Traps errors caught, logs and optionally e-mails.
+    * Can be run as non root user
+
+### Note on mongoDB rights if using auth
+
+User roles need to contain **userAdmin** because mongodump backup db.system.users.
+For now, there is no option to tell mongodump not backuping this users collection.
+
+Update:  For MongoDB 2.6, user needs to have the backup and hostManager (for clusters) roles 
+

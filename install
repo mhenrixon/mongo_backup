@@ -1,0 +1,20 @@
+#!/bin/bash
+
+cd /tmp 
+
+echo 'Installing mongo_backup'
+
+echo 'Dowloading mongo_backup files from github'
+curl -fsSL https://raw.githubusercontent.com/mhenrixon/mongo_backup/master/mongo_backup.conf
+curl -fsSL https://raw.githubusercontent.com/mhenrixon/mongo_backup/master/mongo_backup.sh
+
+echo 'Moving mongo_backup.conf to /etc/mongo_backup.conf'
+mv mongo_backup.conf /etc/mongo_backup.conf
+
+echo 'Moving mongo_backup.sh to /usr/bin/mongo_backup'
+mv mongo_backup.sh /usr/bin/mongo_backup
+
+echo 'Making /usr/bin/mongo_backup executable'
+chmod +x /usr/bin/mongo_backup
+
+echo 'Installation done, please modify /etc/mongo_backup.conf to match your needs'
