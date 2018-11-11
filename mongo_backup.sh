@@ -128,6 +128,8 @@ function rawd_backup {
 
 function perform_backup {
   lock_writes
+  
+  if [ ! -d $BACKUP_PATH ]; then  mkdir -p $BACKUP_PATH; fi
   cd $BACKUP_PATH &> /dev/null
   if [ "$DO_BACKUP" == "full" ] ; then
     cd $BACKUP_PATH
